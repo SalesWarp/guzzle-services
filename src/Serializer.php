@@ -122,11 +122,12 @@ class Serializer
         if (null === $operation->getUri()) {
             return new Request(
                 $operation->getHttpMethod(),
-                $this->description->getBaseUri()
+                $this->description->getBaseUri(),
+                $command['headers']
             );
         }
 
-        return $this->createCommandWithUri($operation, $command);
+        return $this->createCommandWithUri($operation, $command, $command['headers']);
     }
 
     /**
@@ -139,7 +140,8 @@ class Serializer
      */
     private function createCommandWithUri(
         Operation $operation,
-        CommandInterface $command
+        CommandInterface $command,
+        array $headers
     ) {
         // Get the path values and use the client config settings
         $variables = [];
@@ -160,7 +162,8 @@ class Serializer
 
         return new Request(
             $operation->getHttpMethod() ?: 'GET',
-            UriResolver::resolve($this->description->getBaseUri(), $uri)
+            UriResolver::resolve($this->description->getBaseUri(), $uri),
+            $headers
         );
     }
 }
